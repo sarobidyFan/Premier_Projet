@@ -1,57 +1,64 @@
-import { pool } from "./db";
-import { Etudiant } from "../Model/studentModel";
+import { Request, Response } from "express";
+import { StudentService } from "../Service/studentService";
 
-export class StudentRepository {
-  async findAll(): Promise<Etudiant[]> {
-    const result = await pool.query("SELECT * FROM etudiants");
-    return result.rows;
+const studentService = new StudentService();
+
+export class StudentController {
+  async getAll(req: Request, res: Response) {
+    try {
+      const students = await studentService.getAllStudents();
+      res.status(200).json(students);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
   }
 
-  async findById(id: number): Promise<Etudiant | null> {
-    const result = await pool.query(
-      "SELECT * FROM etudiants WHERE id = $1",
-      [id]
-    );
-    return result.rows[0] || null;
+  async getById(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const student = await studentService.getStudentById(id);
+      res.status(200).json(student);
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
+    }
   }
 
-  async create(studentData: Omit<Etudiant, "id">): Promise<Etudiant> {
-    const { first_name, last_name, age } = studentData;
-    const result = await pool.query(
-      `INSERT INTO etudiants (first_name, last_name, age) VALUES ($1, $2, $3) RETURNING *`,
-      [first_name, last_name, age]
-    );
-    return result.rows[0];
+  async create(req: Request, res: Response) {
+    try {
+      const newStudent = await studentService.createStudent(req.body);
+      res.status(201).json(newStudent);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
   }
 
-  async update(id: number, studentData: Omit<Etudiant, "id">): Promise<Etudiant | null> {
-    const { first_name, last_name, age } = studentData;
-    const result = await pool.query(
-      `UPDATE etudiants SET first_name = $1, last_name = $2, age = $3 WHERE id = $4 RETURNING *`,
-      [first_name, last_name, age, id]
-    );
-    return result.rows[0] || null;
+  async update(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const updatedStudent = await studentService.updateStudent(id, req.body);
+      res.status(200).json(updatedStudent);
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
+    }
   }
 
-  async partialUpdate(id: number, studentData: Partial<Omit<Etudiant, "id">>): Promise<Etudiant | null> {
-    const { first_name, last_name, age } = studentData;
-    const result = await pool.query(
-      `UPDATE etudiants 
-       SET first_name = COALESCE($1, first_name), 
-           last_name = COALESCE($2, last_name), 
-           age = COALESCE($3, age)
-       WHERE id = $4
-       RETURNING *`,
-      [first_name, last_name, age, id]
-    );
-    return result.rows[0] || null;
+  async patch(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const patchedStudent = await studentService.patchStudent(id, req.body);
+      res.status(200).json(patchedStudent);
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
+    }
   }
 
-  async delete(id: number): Promise<Etudiant | null> {
-    const result = await pool.query(
-      `DELETE FROM etudiants WHERE id = $1 RETURNING *`,
-      [id]
-    );
-    return result.rows[0] || null;
+  async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const deletedStudent = await studentService.deleteStudent(id);
+      res.status(200).json({ message: "Étudiant supprimé", etudiant: deletedStudent });
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
+    }
   }
 }
