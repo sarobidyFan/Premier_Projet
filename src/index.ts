@@ -10,27 +10,27 @@ const PORT = process.env.PORT || 3000;
 
 const controller = new StudentController();
 
-app.get("/etudiants", (req, res) => 
+app.get("/students", (req, res) => 
     controller.getAll(req, res)
 );
 
-app.get("/etudiants/:id", (req, res) => 
+app.get("/students/:id", (req, res) => 
     controller.getById(req, res)
 );
 
-app.post("/etudiants", (req, res) => 
+app.post("/students", (req, res) => 
     controller.create(req, res)
 );
 
-app.put("/etudiants/:id", (req, res) => 
+app.put("/students/:id", (req, res) => 
     controller.update(req, res)
 );
 
-app.patch("/etudiants/:id", (req, res) => 
+app.patch("/students/:id", (req, res) => 
     controller.patch(req, res)
 );
 
-app.delete("/etudiants/:id", (req, res) => 
+app.delete("/students/:id", (req, res) => 
     controller.delete(req, res)
 );
 

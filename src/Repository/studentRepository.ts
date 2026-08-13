@@ -1,13 +1,13 @@
 import { pool } from "./bd";
-import { Etudiant } from "../Model/studentModel";
+import { Student } from "../Model/studentModel";
 
 export class StudentRepository {
-  async findAll(): Promise<Etudiant[]> {
+  async findAll(): Promise<Student[]> {
     const result = await pool.query("SELECT * FROM etudiants");
     return result.rows;
   }
 
-  async findById(id: number): Promise<Etudiant | null> {
+  async findById(id: number): Promise<Student | null> {
     const result = await pool.query(
       "SELECT * FROM etudiants WHERE id = $1",
       [id]
@@ -15,7 +15,7 @@ export class StudentRepository {
     return result.rows[0] || null;
   }
 
-  async create(studentData: Omit<Etudiant, "id">): Promise<Etudiant> {
+  async create(studentData: Omit<Student, "id">): Promise<Student> {
     const { first_name, last_name, age } = studentData;
     const result = await pool.query(
       `INSERT INTO etudiants (first_name, last_name, age) VALUES ($1, $2, $3) RETURNING *`,
@@ -24,7 +24,7 @@ export class StudentRepository {
     return result.rows[0];
   }
 
-  async update(id: number, studentData: Omit<Etudiant, "id">): Promise<Etudiant | null> {
+  async update(id: number, studentData: Omit<Student, "id">): Promise<Student | null> {
     const { first_name, last_name, age } = studentData;
     const result = await pool.query(
       `UPDATE etudiants SET first_name = $1, last_name = $2, age = $3 WHERE id = $4 RETURNING *`,
@@ -33,7 +33,7 @@ export class StudentRepository {
     return result.rows[0] || null;
   }
 
-  async partialUpdate(id: number, studentData: Partial<Omit<Etudiant, "id">>): Promise<Etudiant | null> {
+  async partialUpdate(id: number, studentData: Partial<Omit<Student, "id">>): Promise<Student | null> {
     const { first_name, last_name, age } = studentData;
     const result = await pool.query(
       `UPDATE etudiants 
@@ -47,7 +47,7 @@ export class StudentRepository {
     return result.rows[0] || null;
   }
 
-  async delete(id: number): Promise<Etudiant | null> {
+  async delete(id: number): Promise<Student | null> {
     const result = await pool.query(
       `DELETE FROM etudiants WHERE id = $1 RETURNING *`,
       [id]
