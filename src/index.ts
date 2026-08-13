@@ -1,19 +1,16 @@
 import express, { type Request,type Response,type Express, response } from 'express';
 import dotenv from 'dotenv';
 import { pool } from './db';
-import { Etudiant } from './types';
+import { Etudiant } from './Model/types';
 import { error } from 'node:console';
 
 dotenv.config();
 
-// typer app en Express.
 const app :Express = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3000 ;
 
-
 app.get("/etudiants", async (req: Request, res: Response) => {
-
     const result = await pool.query(
         "SELECT * FROM etudiants"
     );
@@ -24,7 +21,6 @@ app.get("/etudiants", async (req: Request, res: Response) => {
 
 app.get("/etudiants/:id", async (req: Request, res: Response) => {
     const id = Number(req.params.id);
-
     const result = await pool.query(
         "SELECT * FROM etudiants WHERE id = $1",
         [id]
@@ -35,7 +31,6 @@ app.get("/etudiants/:id", async (req: Request, res: Response) => {
 
 app.post("/etudiants", async (req: Request, res: Response) => {
     const { first_name, last_name, age } = req.body;
-
     const result = await pool.query(
         `INSERT INTO etudiants (first_name, last_name, age) VALUES ($1, $2, $3) RETURNING *`,
         [first_name, last_name, age]
@@ -87,7 +82,6 @@ app.delete("/etudiants/:id", async (req: Request, res: Response) => {
   });
 });
 
-// Démarrage du serveur
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
 })
