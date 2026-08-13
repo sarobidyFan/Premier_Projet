@@ -1,6 +1,6 @@
 import express, { type Request,type Response,type Express, response } from 'express';
 import dotenv from 'dotenv';
-import { pool } from './db';
+import { pool } from './Repositore/db';
 import { Etudiant } from './Model/types';
 import { error } from 'node:console';
 
