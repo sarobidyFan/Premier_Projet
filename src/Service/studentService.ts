@@ -1,48 +1,52 @@
 import { StudentRepository } from "../Repository/studentRepository";
 import { Student } from "../Model/studentModel";
 
-const studentRepo = new StudentRepository();
-
 export class StudentService {
+  private studentRepo: StudentRepository;
+
+  constructor() {
+    this.studentRepo = new StudentRepository();
+  }
+
   async getAllStudents(): Promise<Student[]> {
-    return await studentRepo.findAll();
+    return await this.studentRepo.findAll();
   }
 
   async getStudentById(id: number): Promise<Student> {
-    const student = await studentRepo.findById(id);
+    const student = await this.studentRepo.findById(id);
     if (!student) {
-      throw new Error("Étudiant non trouvé");
+      throw new Error("Student not found");
     }
     return student;
   }
 
   async createStudent(data: Omit<Student, "id">): Promise<Student> {
     if (data.age < 0) {
-      throw new Error("L'âge doit être valide");
+      throw new Error("Age must be valid");
     }
-    return await studentRepo.create(data);
+    return await this.studentRepo.create(data);
   }
 
   async updateStudent(id: number, data: Omit<Student, "id">): Promise<Student> {
-    const updatedStudent = await studentRepo.update(id, data);
+    const updatedStudent = await this.studentRepo.update(id, data);
     if (!updatedStudent) {
-      throw new Error("Étudiant non trouvé pour la mise à jour");
+      throw new Error("Student not found for update");
     }
     return updatedStudent;
   }
 
   async patchStudent(id: number, data: Partial<Omit<Student, "id">>): Promise<Student> {
-    const patchedStudent = await studentRepo.partialUpdate(id, data);
+    const patchedStudent = await this.studentRepo.partialUpdate(id, data);
     if (!patchedStudent) {
-      throw new Error("Étudiant non trouvé pour la mise à jour partielle");
+      throw new Error("Student not found for partial update");
     }
     return patchedStudent;
   }
 
   async deleteStudent(id: number): Promise<Student> {
-    const deletedStudent = await studentRepo.delete(id);
+    const deletedStudent = await this.studentRepo.delete(id);
     if (!deletedStudent) {
-      throw new Error("Impossible de supprimer : Étudiant non trouvé");
+      throw new Error("Cannot delete: Student not found");
     }
     return deletedStudent;
   }
