@@ -1,4 +1,4 @@
-import { pool } from "./bd";
+import { pool } from "../configuration/bd";
 import { User } from "../Model/userModel";
 
 

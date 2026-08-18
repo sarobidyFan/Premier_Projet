@@ -1,6 +1,7 @@
 import { UserRepository } from "../Repository/userRepository";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { generateToken } from "../security/jwt";
+import { HttpError } from "../security/HttpError";
 
 export class AuthService {
   private userRepository: UserRepository;
@@ -12,7 +13,7 @@ export class AuthService {
   async register(email: string, password: string) {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
-      throw new Error("Email already in use");
+      throw new HttpError(409, "Email already in use");
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -24,24 +25,15 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new HttpError(401, "Invalid email or password");
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
     if (!passwordCorrect) {
-      throw new Error("Invalid email or password");
+      throw new HttpError(401, "Invalid email or password");
     }
 
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error("JWT_SECRET is not configured");
-    }
-
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      secret,
-      { expiresIn: "1h" }
-    );
+    const token = generateToken({ userId: user.id, email: user.email });
 
     return { token };
   }

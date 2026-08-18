@@ -1,5 +1,6 @@
 import { StudentRepository } from "../Repository/studentRepository";
 import { Student } from "../Model/studentModel";
+import { HttpError } from "../security/HttpError";
 
 export class StudentService {
   private studentRepo: StudentRepository;
@@ -15,14 +16,14 @@ export class StudentService {
   async getStudentById(id: number): Promise<Student> {
     const student = await this.studentRepo.findById(id);
     if (!student) {
-      throw new Error("Student not found");
+      throw new HttpError(404, "Student not found");
     }
     return student;
   }
 
   async createStudent(data: Omit<Student, "id">): Promise<Student> {
     if (data.age < 0) {
-      throw new Error("Age must be valid");
+      throw new HttpError(400, "Age must be valid");
     }
     return await this.studentRepo.create(data);
   }
@@ -30,7 +31,7 @@ export class StudentService {
   async updateStudent(id: number, data: Omit<Student, "id">): Promise<Student> {
     const updatedStudent = await this.studentRepo.update(id, data);
     if (!updatedStudent) {
-      throw new Error("Student not found for update");
+      throw new HttpError(404, "Student not found for update");
     }
     return updatedStudent;
   }
@@ -38,7 +39,7 @@ export class StudentService {
   async patchStudent(id: number, data: Partial<Omit<Student, "id">>): Promise<Student> {
     const patchedStudent = await this.studentRepo.partialUpdate(id, data);
     if (!patchedStudent) {
-      throw new Error("Student not found for partial update");
+      throw new HttpError(404, "Student not found for partial update");
     }
     return patchedStudent;
   }
@@ -46,7 +47,7 @@ export class StudentService {
   async deleteStudent(id: number): Promise<Student> {
     const deletedStudent = await this.studentRepo.delete(id);
     if (!deletedStudent) {
-      throw new Error("Cannot delete: Student not found");
+      throw new HttpError(404, "Cannot delete: Student not found");
     }
     return deletedStudent;
   }
