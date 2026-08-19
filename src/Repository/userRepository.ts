@@ -1,5 +1,5 @@
 import { pool } from "../configuration/bd";
-import { User } from "../Model/userModel";
+import { User } from "../Models/userModel";
 
 
 export class UserRepository {

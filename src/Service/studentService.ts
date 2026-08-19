@@ -1,5 +1,5 @@
 import { StudentRepository } from "../Repository/studentRepository";
-import { Student } from "../Model/studentModel";
+import { Student } from "../Models/studentModel";
 import { HttpError } from "../security/HttpError";
 
 export class StudentService {

@@ -1,5 +1,5 @@
 import { pool } from "../configuration/bd";
-import { Student } from "../Model/studentModel";
+import { Student } from "../Models/studentModel";
 
 export class StudentRepository {
   async findAll(): Promise<Student[]> {
